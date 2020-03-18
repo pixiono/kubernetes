@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Run main tasks
+    include: roles/common/tasks/main.yml
+
+  - name: Run master tasks
+    include: roles/common/tasks/master.yml
+    when: k8s_type == "master"
+
+  - name: Run traefik tasks
+    include: roles/common/tasks/traefik.yml
+    when: inventory_hostname == "master1"
+    become: false
+
+  - name: Run node tasks
+    include: roles/tasks/node.yaml
+    when: k8s_type == "worker"
+
+  handlers:
+    - name: docker status
+      service: name=docker state=started

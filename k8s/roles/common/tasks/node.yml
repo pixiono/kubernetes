@@ -1,0 +1,13 @@
+- name: Copy the join command to server location
+  copy: 
+    src: join-command
+    dest: /tmp/join-command.sh
+    mode: 0777
+
+- name: Join the node to cluster
+  command: sh /tmp/join-command.sh
+  when: k8s_type == "worker"
+
+  # - name: Join the master to cluster
+  #   command: "{{ lookup('file', '/tmp/join-command.sh') }} --control-plane"
+  #   when: k8s_type == "master" and not inventory_hostname == "master1"

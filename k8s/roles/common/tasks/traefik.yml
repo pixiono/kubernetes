@@ -1,0 +1,8 @@
+- name: Apply traefik rbac
+  command: kubectl apply -f https://raw.githubusercontent.com/containous/traefik/v1.7/examples/k8s/traefik-rbac.yaml
+
+- name: Apply traefik daemon set
+  command: kubectl apply -f https://raw.githubusercontent.com/containous/traefik/v1.7/examples/k8s/traefik-ds.yaml
+
+- name: Create service for traefik dashboard
+  command: kubectl apply -f https://raw.githubusercontent.com/containous/traefik/v1.7/examples/k8s/ui.yaml

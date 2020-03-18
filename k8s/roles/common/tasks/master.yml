@@ -1,0 +1,68 @@
+- name: Test if Kubernetes is already Initialized
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: kubernetes_init
+
+- name: Initialize the Kubernetes cluster using kubeadm
+  command: "kubeadm init --apiserver-advertise-address={{ node_ip }} --pod-network-cidr=192.168.0.0/16 --control-plane-endpoint 192.168.33.2:6443 --apiserver-cert-extra-sans=192.168.33.2"
+  when: not kubernetes_init.stat.exists and inventory_hostname == "master1"
+  register: newk8snode
+
+- name: Setup kubeconfig for vagrant user
+  file:
+    path: /home/vagrant/.kube
+    state: directory
+    owner: vagrant
+    group: vagrant
+
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+  delegate_to: master1
+  when: not inventory_hostname == "master1"
+
+- set_fact:
+    kubeadm_join: "{{ join_command.stdout }}"
+  when: not inventory_hostname == "master1"
+
+- name: Download certificate from master
+  synchronize:
+    mode: pull
+    src: /etc/kubernetes/pki
+    dest: ./tmp_files
+    rsync_opts:
+      - "--exclude=apiserver*"
+      - "--exclude=etcd/healthcheck-client.*"
+      - "--exclude=etcd/peer.*"
+      - "--exclude=etcd/server.*"
+  when: inventory_hostname == "master1"
+
+- name: Uploading certifiactes to node
+  synchronize:
+    mode: push
+    src: ./tmp_files/pki
+    dest: /etc/kubernetes
+  when: not inventory_hostname == "master1"
+
+- name: Join the master to cluster
+  shell: "{{ kubeadm_join }} --control-plane --apiserver-advertise-address {{ node_ip }}"
+  register: newk8snode
+  when: not kubernetes_init.stat.exists and not inventory_hostname == "master1"
+
+- name: Setup kubeconfig for vagrant user
+  copy:
+    remote_src: true
+    src: /etc/kubernetes/admin.conf
+    dest: /home/vagrant/.kube/config
+    owner: vagrant
+    group: vagrant
+
+- name: Install calico pod network
+  become: false
+  command: kubectl apply -f https://docs.projectcalico.org/v3.11/manifests/calico.yaml
+  when: inventory_hostname == "master1"
+
+- name: Remove taint from master
+  become: false
+  shell: "kubectl taint nodes --all node-role.kubernetes.io/master-"
+  ignore_errors: yes

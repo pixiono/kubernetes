@@ -1,0 +1,1 @@
+kubeadm join 192.168.33.2:443 --token kqrg9c.auxlbm6v2uzjf7jf     --discovery-token-ca-cert-hash sha256:ca2821b86ef10666307ed2ac72e80d15306c97eafdd23c9d04037090190318dd 
