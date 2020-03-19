@@ -91,9 +91,22 @@
     path: /etc/default/kubelet
     line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
     create: yes
+  register: configurenodeip
 
 - name: Restart kubelet
   service:
     name: kubelet
     daemon_reload: yes
     state: restarted
+  when: configurenodeip.changed
+
+# needed for pip module
+- name: Install pip3
+  apt:
+    name: python3-pip
+    state: present
+  become: true
+
+# needed for k8s module
+- pip:
+    name: openshift

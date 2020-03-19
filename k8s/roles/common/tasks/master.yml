@@ -4,7 +4,7 @@
   register: kubernetes_init
 
 - name: Initialize the Kubernetes cluster using kubeadm
-  command: "kubeadm init --apiserver-advertise-address={{ node_ip }} --pod-network-cidr=192.168.0.0/16 --control-plane-endpoint 192.168.33.2:6443 --apiserver-cert-extra-sans=192.168.33.2"
+  command: "kubeadm init --control-plane-endpoint=192.168.33.2 --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address={{ node_ip }}"
   when: not kubernetes_init.stat.exists and inventory_hostname == "master1"
   register: newk8snode
 
@@ -45,7 +45,7 @@
   when: not inventory_hostname == "master1"
 
 - name: Join the master to cluster
-  shell: "{{ kubeadm_join }} --control-plane --apiserver-advertise-address {{ node_ip }}"
+  shell: "{{ kubeadm_join }} --control-plane --apiserver-advertise-address={{ node_ip }}"
   register: newk8snode
   when: not kubernetes_init.stat.exists and not inventory_hostname == "master1"
 
