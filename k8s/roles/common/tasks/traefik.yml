@@ -1,8 +1,14 @@
-- name: Apply traefik rbac
-  command: kubectl apply -f https://raw.githubusercontent.com/containous/traefik/v1.7/examples/k8s/traefik-rbac.yaml
+- name: Create a k8s namespace
+  k8s:
+    name: traefik
+    api_version: v1
+    kind: Namespace
+    state: present
 
-- name: Apply traefik daemon set
-  command: kubectl apply -f https://raw.githubusercontent.com/containous/traefik/v1.7/examples/k8s/traefik-ds.yaml
+- name: Upload traefik config
+  copy:
+    src: ../files/traefik.yml
+    dest: /tmp/traefik.yml
 
-- name: Create service for traefik dashboard
-  command: kubectl apply -f https://raw.githubusercontent.com/containous/traefik/v1.7/examples/k8s/ui.yaml
+- name: Apply traefik objects
+  command: kubectl apply -f /tmp/traefik.yml -n traefik
