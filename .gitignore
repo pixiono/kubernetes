@@ -1,2 +1,2 @@
-.vagrant/*
-*/tmp_files/*
+.vagrant/**
+**/tmp_files/**
