@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-MASTERS = 2
+MASTERS = 3
 NODES = 0
 
 Vagrant.configure("2") do |config|
