@@ -6,7 +6,6 @@
 - name: Initialize the Kubernetes cluster using kubeadm
   command: "kubeadm init --control-plane-endpoint=192.168.33.2 --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address={{ node_ip }}"
   when: not kubernetes_init.stat.exists and inventory_hostname == "master1"
-  register: newk8snode
 
 - name: Setup kubeconfig for vagrant user
   file:
@@ -14,40 +13,6 @@
     state: directory
     owner: vagrant
     group: vagrant
-
-- name: Generate join command
-  command: kubeadm token create --print-join-command
-  register: join_command
-  delegate_to: master1
-  when: not inventory_hostname == "master1"
-
-- set_fact:
-    kubeadm_join: "{{ join_command.stdout }}"
-  when: not inventory_hostname == "master1"
-
-- name: Download certificate from master
-  synchronize:
-    mode: pull
-    src: /etc/kubernetes/pki
-    dest: ./tmp_files
-    rsync_opts:
-      - "--exclude=apiserver*"
-      - "--exclude=etcd/healthcheck-client.*"
-      - "--exclude=etcd/peer.*"
-      - "--exclude=etcd/server.*"
-  when: inventory_hostname == "master1"
-
-- name: Uploading certifiactes to node
-  synchronize:
-    mode: push
-    src: ./tmp_files/pki
-    dest: /etc/kubernetes
-  when: not inventory_hostname == "master1"
-
-- name: Join the master to cluster
-  shell: "{{ kubeadm_join }} --control-plane --apiserver-advertise-address={{ node_ip }}"
-  register: newk8snode
-  when: not kubernetes_init.stat.exists and not inventory_hostname == "master1"
 
 - name: Setup kubeconfig for vagrant user
   copy:

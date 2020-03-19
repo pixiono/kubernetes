@@ -1,13 +1,21 @@
-- name: Copy the join command to server location
-  copy: 
-    src: join-command
-    dest: /tmp/join-command.sh
-    mode: 0777
+- name: Test if Kubernetes is already Initialized
+  stat:
+    # path: /etc/kubernetes/admin.conf
+    path: /etc/kubernetes/pki/ca.crt
+  register: kubernetes_init
 
-- name: Join the node to cluster
-  command: sh /tmp/join-command.sh
-  when: k8s_type == "worker"
+- name: "Upload certifiactes"
+  command: kubeadm init phase upload-certs --upload-certs
+  delegate_to: master1
+  when: not kubernetes_init.stat.exists
+  register: cert_key
 
-  # - name: Join the master to cluster
-  #   command: "{{ lookup('file', '/tmp/join-command.sh') }} --control-plane"
-  #   when: k8s_type == "master" and not inventory_hostname == "master1"
+- name: Generate join command
+  command: kubeadm token create --print-join-command
+  register: join_command
+  delegate_to: master1
+  when: not kubernetes_init.stat.exists
+
+- name: Join node to cluster
+  shell: "{{ join_command.stdout }} --certificate-key {{ cert_key.stdout_lines[2] }} --apiserver-advertise-address={{ node_ip }} {% if k8s_type == 'master' %} --control-plane {% endif %}"
+  when: not kubernetes_init.stat.exists
