@@ -22,6 +22,7 @@ Vagrant.configure("2") do |config|
         # ansible.verbose = "vvvv"
         ansible.playbook = "k8s/playbook.yml"
         ansible.extra_vars = {
+          ansible_python_interpreter: "/usr/bin/python3",
           node_ip: "192.168.33.1#{i}",
           k8s_type: "master"
         }
