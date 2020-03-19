@@ -2,11 +2,9 @@
 # vi: set ft=ruby :
 
 MASTERS = 3
-NODES = 0
+NODES = 1
 
 Vagrant.configure("2") do |config|
-
-  # config.vm.box = "debian/buster64"
   config.vm.box = "debian/stretch64"
 
   (1..MASTERS).each do |i|
@@ -19,7 +17,7 @@ Vagrant.configure("2") do |config|
       end
     
       master.vm.provision "ansible" do |ansible|
-        # ansible.verbose = "vvvv"
+        ansible.verbose = "v"
         ansible.playbook = "k8s/playbook.yml"
         ansible.extra_vars = {
           ansible_python_interpreter: "/usr/bin/python3",
@@ -30,19 +28,25 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "node" do |node|
-    node.vm.network "private_network", ip: "192.168.33.21"
-    node.vm.hostname = "node01"
-    node.vm.provider "virtualbox" do |vb|
-        vb.cpus = 2
-        vb.memory = 2048
-    end
-  
-    node.vm.provision "ansible" do |ansible|
-      ansible.playbook = "k8s/playbook.yml"
-      ansible.extra_vars = {
-        node_ip: "192.168.33.21",
-      }
+
+  (1..NODES).each do |i|
+    config.vm.define "node#{i}" do |node|
+      node.vm.network "private_network", ip: "192.168.33.2#{i}"
+      node.vm.hostname = "node#{i}"
+      node.vm.provider "virtualbox" do |vb|
+          vb.cpus = 2
+          vb.memory = 2048
+      end
+    
+      node.vm.provision "ansible" do |ansible|
+        ansible.verbose = "v"
+        ansible.playbook = "k8s/playbook.yml"
+        ansible.extra_vars = {
+          ansible_python_interpreter: "/usr/bin/python3",
+          node_ip: "192.168.33.21",
+          k8s_type: "worker"
+        }
+      end
     end
   end
 
@@ -56,5 +60,4 @@ Vagrant.configure("2") do |config|
         vb.memory = 1024
     end
   end
-
 end
