@@ -3,21 +3,11 @@
   become: true
   tasks:
 
-  - name: Run main tasks
+  - name: Run common tasks
     include: roles/common/tasks/main.yml
 
-  - name: Run master tasks
-    include: roles/common/tasks/master.yml
-    when: inventory_hostname == "master1"
-
-  - name: Run node tasks
-    include: roles/common/tasks/node.yml
-    when: not inventory_hostname == "master1"
-
-  - name: Run traefik tasks
-    include: roles/common/tasks/traefik.yml
-    when: inventory_hostname == "master1"
-    become: false
+  - name: Run k8s tasks
+    include: roles/k8s/tasks/main.yml
 
   handlers:
     - name: docker status

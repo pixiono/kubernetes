@@ -1,0 +1,15 @@
+  - name: Install prerequirements
+    include: roles/k8s/tasks/prerequirements.yml
+
+  - name: Run node tasks
+    include: roles/k8s/tasks/node.yml
+    when: not inventory_hostname == "master1"
+
+  - name: Run master tasks
+    include: roles/k8s/tasks/master.yml
+    when: k8s_type == 'master'
+
+  - name: Run traefik tasks
+    include: roles/k8s/tasks/traefik.yml
+    when: inventory_hostname == "master1"
+    become: false

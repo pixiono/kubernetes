@@ -20,7 +20,7 @@
     src: /etc/kubernetes/admin.conf
     dest: /home/vagrant/.kube/config
     owner: vagrant
-    group: vagrant
+    group: vagrant 
 
 - name: Install calico pod network
   become: false
