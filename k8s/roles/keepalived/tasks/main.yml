@@ -1,0 +1,25 @@
+- name: Allow ip foward and nonlocal bind
+  command: "{{ item }}"
+  with_items:
+    - sysctl -w net.ipv4.ip_forward="1"
+    - sysctl -w net.ipv4.ip_nonlocal_bind="1"
+  when: "'master' in group_names"
+
+- name: Install keepalived
+  apt:
+    name: keepalived
+    state: present
+  when: "'master' in group_names"
+
+- name: Add keepalived config
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  register: keepalived_config
+  when: "'master' in group_names"
+
+- name: Start keepalived
+  service:
+    name: keepalived
+    state: restarted
+  when: keepalived_config.changed and "'master' in group_names"

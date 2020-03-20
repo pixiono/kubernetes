@@ -1,0 +1,26 @@
+global_defs {
+  router_id {{ inventory_hostname }}
+}
+ 
+vrrp_script check_haproxy {
+  script "/usr/bin/killall -0 haproxy"
+  interval 2
+  weight 2
+}
+ 
+vrrp_instance web-prod {
+{% if inventory_hostname == groups['master'][0] %}
+  state MASTER
+{% else %}
+  state MASTER
+{% endif %}
+  interface eth1
+  virtual_router_id 1
+  priority 99
+  virtual_ipaddress {
+    {{ control_plane_endpoint }}
+  }
+  track_script {
+    check_haproxy
+  }
+}
