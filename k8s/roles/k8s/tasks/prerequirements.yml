@@ -96,6 +96,7 @@
   become: true
 
 # needed for k8s module
-- pip:
+- name: Install openshift pip module
+  pip:
     name: openshift
     executable: /usr/bin/pip3
