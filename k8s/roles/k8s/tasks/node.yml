@@ -4,7 +4,7 @@
     path: /etc/kubernetes/pki/ca.crt
   register: kubernetes_init
 
-- name: "Upload certifiactes"
+- name: Upload certifiactes
   command: kubeadm init phase upload-certs --upload-certs
   delegate_to: "{{ groups['master'][0] }}"
   when: not kubernetes_init.stat.exists
@@ -17,7 +17,7 @@
   when: not kubernetes_init.stat.exists
 
 - name: Join node to cluster
-  shell: "{{ join_command.stdout }} --certificate-key {{ cert_key.stdout_lines[2] }} --apiserver-advertise-address={{ node_ip }} {% if \"'master' in {{ group_names }}\" %} --control-plane {% endif %}"
+  shell: "{{ join_command.stdout }} --apiserver-advertise-address={{ node_ip }} {% if \"'master' in {{ group_names }}\" %} --certificate-key {{ cert_key.stdout_lines[2] }} --control-plane {% endif %}"
   when: not kubernetes_init.stat.exists
 
 - include: roles/k8s/tasks/kube_config.yml
