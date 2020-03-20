@@ -1,13 +1,13 @@
 ---
 - hosts: all
   become: true
-  tasks:
-
-  - name: Run common tasks
-    include: roles/common/tasks/main.yml
-
-  - name: Run k8s tasks
-    include: roles/k8s/tasks/main.yml
+  vars:
+    control_plane_endpoint: 192.168.33.11:8443
+    ansible_python_interpreter: /usr/bin/python3
+  roles:
+    - common
+    - haproxy
+    - k8s
 
   handlers:
     - name: docker status

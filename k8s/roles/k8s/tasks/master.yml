@@ -4,30 +4,11 @@
   register: kubernetes_init
 
 - name: Initialize the Kubernetes cluster using kubeadm
-  command: "kubeadm init --control-plane-endpoint=192.168.33.2 --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address={{ node_ip }}"
-  when: not kubernetes_init.stat.exists and inventory_hostname == "master1"
+  command: "kubeadm init --control-plane-endpoint={{ control_plane_endpoint }} --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address={{ node_ip }}"
+  when: not kubernetes_init.stat.exists
 
-- name: Setup kubeconfig for vagrant user
-  file:
-    path: /home/vagrant/.kube
-    state: directory
-    owner: vagrant
-    group: vagrant
-
-- name: Setup kubeconfig for vagrant user
-  copy:
-    remote_src: true
-    src: /etc/kubernetes/admin.conf
-    dest: /home/vagrant/.kube/config
-    owner: vagrant
-    group: vagrant 
+- include: roles/k8s/tasks/kube_config.yml
 
 - name: Install calico pod network
   become: false
   command: kubectl apply -f https://docs.projectcalico.org/v3.11/manifests/calico.yaml
-  when: inventory_hostname == "master1"
-
-- name: Remove taint from master
-  become: false
-  shell: "kubectl taint nodes --all node-role.kubernetes.io/master-"
-  ignore_errors: yes

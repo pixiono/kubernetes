@@ -98,3 +98,4 @@
 # needed for k8s module
 - pip:
     name: openshift
+    executable: /usr/bin/pip3

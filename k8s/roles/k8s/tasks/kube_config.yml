@@ -1,0 +1,15 @@
+- name: Setup kubeconfig for vagrant user
+  file:
+    path: /home/vagrant/.kube
+    state: directory
+    owner: vagrant
+    group: vagrant
+
+- name: Setup kubeconfig for vagrant user
+  copy:
+    remote_src: true
+    src: /etc/kubernetes/admin.conf
+    dest: /home/vagrant/.kube/config
+    owner: vagrant
+    group: vagrant 
+    

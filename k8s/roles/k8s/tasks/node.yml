@@ -6,16 +6,25 @@
 
 - name: "Upload certifiactes"
   command: kubeadm init phase upload-certs --upload-certs
-  delegate_to: master1
+  delegate_to: "{{ groups['master'][0] }}"
   when: not kubernetes_init.stat.exists
   register: cert_key
 
 - name: Generate join command
   command: kubeadm token create --print-join-command
   register: join_command
-  delegate_to: master1
+  delegate_to: "{{ groups['master'][0] }}"
   when: not kubernetes_init.stat.exists
 
 - name: Join node to cluster
-  shell: "{{ join_command.stdout }} --certificate-key {{ cert_key.stdout_lines[2] }} --apiserver-advertise-address={{ node_ip }} {% if k8s_type == 'master' %} --control-plane {% endif %}"
+  shell: "{{ join_command.stdout }} --certificate-key {{ cert_key.stdout_lines[2] }} --apiserver-advertise-address={{ node_ip }} {% if \"'master' in {{ group_names }}\" %} --control-plane {% endif %}"
   when: not kubernetes_init.stat.exists
+
+- include: roles/k8s/tasks/kube_config.yml
+  when: "'master' in {{ group_names }}"
+
+- name: Remove taint from master
+  become: false
+  shell: "kubectl taint nodes --all node-role.kubernetes.io/master-"
+  ignore_errors: yes
+  when: "'master' in {{ group_names }}"

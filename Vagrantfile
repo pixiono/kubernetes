@@ -7,6 +7,11 @@ NODES = 1
 Vagrant.configure("2") do |config|
   config.vm.box = "debian/stretch64"
 
+  config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/me.pub"
+  config.vm.provision "shell", inline: <<-SHELL
+    cat /home/vagrant/.ssh/me.pub >> /home/vagrant/.ssh/authorized_keys
+  SHELL
+
   (1..MASTERS).each do |i|
     config.vm.define "master#{i}" do |master|
       master.vm.network "private_network", ip: "192.168.33.1#{i}"
@@ -17,13 +22,9 @@ Vagrant.configure("2") do |config|
       end
     
       master.vm.provision "ansible" do |ansible|
-        ansible.verbose = "v"
+        # ansible.verbose = "vvvv"
         ansible.playbook = "k8s/playbook.yml"
-        ansible.extra_vars = {
-          ansible_python_interpreter: "/usr/bin/python3",
-          node_ip: "192.168.33.1#{i}",
-          k8s_type: "master"
-        }
+        ansible.inventory_path = "vagrant_inventory"
       end
     end
   end
@@ -39,13 +40,9 @@ Vagrant.configure("2") do |config|
       end
     
       node.vm.provision "ansible" do |ansible|
-        ansible.verbose = "v"
+        # ansible.verbose = "v"
         ansible.playbook = "k8s/playbook.yml"
-        ansible.extra_vars = {
-          ansible_python_interpreter: "/usr/bin/python3",
-          node_ip: "192.168.33.21",
-          k8s_type: "worker"
-        }
+        ansible.inventory_path = "vagrant_inventory"
       end
     end
   end

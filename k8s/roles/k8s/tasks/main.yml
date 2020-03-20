@@ -1,15 +1,16 @@
   - name: Install prerequirements
     include: roles/k8s/tasks/prerequirements.yml
 
-  - name: Run node tasks
-    include: roles/k8s/tasks/node.yml
-    when: not inventory_hostname == "master1"
-
+  # Master in this case is the first master node
   - name: Run master tasks
     include: roles/k8s/tasks/master.yml
-    when: k8s_type == 'master'
+    when: inventory_hostname == "{{ groups['master'][0] }}"
+
+  - name: Run node tasks
+    include: roles/k8s/tasks/node.yml
+    when: not inventory_hostname == "{{ groups['master'][0] }}"
 
   - name: Run traefik tasks
     include: roles/k8s/tasks/traefik.yml
-    when: inventory_hostname == "master1"
+    when: inventory_hostname == "{{ groups['master'][0] }}"
     become: false
