@@ -22,9 +22,3 @@
 
 - include: roles/k8s/tasks/kube_config.yml
   when: "'master' in {{ group_names }}"
-
-- name: Remove taint from master
-  become: false
-  shell: "kubectl taint nodes --all node-role.kubernetes.io/master-"
-  ignore_errors: yes
-  when: "'master' in {{ group_names }}"

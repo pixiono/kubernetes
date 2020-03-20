@@ -10,6 +10,12 @@
     include: roles/k8s/tasks/node.yml
     when: not inventory_hostname == "{{ groups['master'][0] }}"
 
+  - name: Remove taint from master
+    become: false
+    shell: "kubectl taint nodes --all node-role.kubernetes.io/master-"
+    ignore_errors: yes
+    when: "'master' in {{ group_names }}"
+
   - name: Run traefik tasks
     include: roles/k8s/tasks/traefik.yml
     when: inventory_hostname == "{{ groups['master'][0] }}"
