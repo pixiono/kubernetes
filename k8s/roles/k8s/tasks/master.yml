@@ -4,7 +4,7 @@
   register: kubernetes_init
 
 - name: Initialize the Kubernetes cluster using kubeadm
-  command: "kubeadm init --control-plane-endpoint={{ control_plane_endpoint }} --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address={{ node_ip }}"
+  command: "kubeadm init --control-plane-endpoint={{ control_plane_endpoint }}:{{ control_plane_endpoint_port }} --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address={{ node_ip }}"
   when: not kubernetes_init.stat.exists
 
 - include: roles/k8s/tasks/kube_config.yml

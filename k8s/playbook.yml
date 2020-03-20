@@ -2,7 +2,8 @@
 - hosts: all
   become: true
   vars:
-    control_plane_endpoint: 192.168.33.11:8443
+    control_plane_endpoint: 192.168.33.3
+    control_plane_endpoint_port: 8443
     ansible_python_interpreter: /usr/bin/python3
   roles:
     - common
