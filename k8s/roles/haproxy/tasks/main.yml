@@ -1,0 +1,18 @@
+- name: Install haproxy
+  apt:
+    name: haproxy
+    state: present
+  when: "'master' in group_names"
+
+- name: Add haproxy configuration
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  register: haproxyconfig
+  when: "'master' in group_names"
+
+- name: Restart haproxy
+  systemd:
+    name: haproxy
+    state: restarted
+  when: "haproxyconfig.changed and 'master' in group_names"
