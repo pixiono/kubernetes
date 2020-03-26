@@ -7,8 +7,14 @@
 
 - name: Upload traefik config
   copy:
-    src: ../files/traefik.yml
-    dest: /tmp/traefik.yml
+    src: "../files/{{ item }}"
+    dest: "/tmp/{{ item }}"
+  with_items:
+    - traefik.yml
+    - traefik_dashboard.yml
 
 - name: Apply traefik objects
-  command: kubectl apply -f /tmp/traefik.yml -n traefik
+  command: "kubectl apply -f /tmp/{{ item }} -n traefik"
+  with_items:
+    - traefik.yml
+    - traefik_dashboard.yml
