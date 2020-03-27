@@ -15,6 +15,7 @@
     update_cache: yes
   vars:
     packages:
+    - ntp
     - vim
     - htop
     - tree
