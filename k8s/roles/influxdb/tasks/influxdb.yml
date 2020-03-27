@@ -8,6 +8,7 @@
   k8s:
     state: present
     src: /tmp/influxdb/files/influxdb_storage_local.yml
+  when: ansible_user == "vagrant"
 
 - name: Run influxdb helm chart
   shell: helm upgrade --install influxdb influxdata/influxdb --namespace=monitoring --set=persistence.existingClaim=influxdb,setDefaultUser.enabled=true,setDefaultUser.user.existingSecret=influxdb-auth
