@@ -1,0 +1,7 @@
+- name: Apply chronograf traefik route
+  k8s:
+    state: present
+    src: /tmp/influxdb/files/chronograf_traefik.yml
+
+- name: Run chronograf helm chart
+  shell: helm upgrade --install chronograf influxdata/chronograf --namespace=monitoring

@@ -1,0 +1,48 @@
+- name: Check if helm is installed
+  stat:
+    path: /usr/local/bin/helm
+  register: helm
+  become: false
+
+- name: Install helm
+  get_url: 
+    url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    dest: /tmp/get-helm
+    mode: '0770'
+  when: helm.stat.exists == false
+
+- name: Install helm
+  shell: /tmp/get-helm
+  when: helm.stat.exists == false
+
+- name: Add influxdb helm repo
+  command: helm repo add influxdata https://helm.influxdata.com/
+  become: false
+
+- name: Create monitoring namespace
+  k8s:
+    name: monitoring
+    api_version: v1
+    kind: Namespace
+    state: present
+  become: false
+
+- name: Upload config yamls
+  copy:
+    src: "../files"
+    dest: "/tmp/influxdb"
+
+- name: Run influxdb tasks
+  include: roles/influxdb/tasks/influxdb.yml
+  when: inventory_hostname == groups['master'][0]
+  become: false
+
+- name: Run telegraf tasks
+  include: roles/influxdb/tasks/telegraf.yml
+  when: inventory_hostname == groups['master'][0]
+  become: false
+
+- name: Run chronograf tasks
+  include: roles/influxdb/tasks/chronograf.yml
+  when: inventory_hostname == groups['master'][0]
+  become: false

@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: chronograf
+  namespace: monitoring
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`chronograf.minikube`)
+    kind: Rule
+    services:
+    - name: chronograf-chronograf
+      port: 80
