@@ -37,7 +37,7 @@ defaults
   errorfile 504 /etc/haproxy/errors/504.http
 
 listen stats
-  bind    *:9000
+  bind    127.0.0.1:9000
   mode    http
   stats   enable
   stats   hide-version
