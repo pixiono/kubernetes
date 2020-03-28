@@ -4,11 +4,11 @@
   # Master in this case is the first master node
   - name: Run master tasks
     include: roles/k8s/tasks/master.yml
-    when: inventory_hostname == "{{ groups['master'][0] }}"
+    when: inventory_hostname == groups['master'][0]
 
   - name: Run node tasks
     include: roles/k8s/tasks/node.yml
-    when: not inventory_hostname == "{{ groups['master'][0] }}"
+    when: not inventory_hostname == groups['master'][0]
 
   - name: Remove taint from master
     become: false
@@ -18,5 +18,5 @@
 
   - name: Run traefik tasks
     include: roles/k8s/tasks/traefik.yml
-    when: inventory_hostname == "{{ groups['master'][0] }}"
+    when: inventory_hostname == groups['master'][0]
     become: false
