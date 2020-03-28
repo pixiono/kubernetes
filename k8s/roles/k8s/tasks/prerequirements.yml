@@ -93,10 +93,26 @@
   apt:
     name: python3-pip
     state: present
-  become: true
 
 # needed for k8s module
 - name: Install openshift pip module
   pip:
     name: openshift
     executable: /usr/bin/pip3
+
+- name: Checkout kubens
+  git:
+    repo: https://github.com/ahmetb/kubectx
+    dest: /opt/kubectx
+
+- name: Set symlink for kubectx
+  file:
+    state: link
+    src:  /opt/kubectx/kubectx
+    dest: /usr/local/bin/kubectx
+
+- name: Set symlink for kubens
+  file:
+    state: link
+    src:  /opt/kubectx/kubens
+    dest: /usr/local/bin/kubens
