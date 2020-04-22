@@ -49,8 +49,9 @@ To access internal applications (like Traefik dashboard) on the Kubernetes clust
 10.0.33.3  chronograf.local traefik.local
 ```
 
-Now you should be able to reach the applications on port 88, for example:
-http://traefik.local:88/dashboard/#/
+Now you can reach both internal applications:
+* http://traefik.local:88
+* http://chronograf.local:88
 
 The internal applications are only forwarded to the outside if it is a vagrant environment, otherwise you should tunnel the corresponding port via SSH to your local machine, for example like this:
 ```
