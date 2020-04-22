@@ -5,9 +5,9 @@ metadata:
   namespace: monitoring
 spec:
   entryPoints:
-    - web
+    - internal
   routes:
-  - match: Host(`chronograf.minikube`)
+  - match: Host(`chronograf.local`)
     kind: Rule
     services:
     - name: chronograf-chronograf

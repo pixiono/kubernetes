@@ -5,9 +5,9 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - web
+    - internal
   routes:
-  - match: Host(`traefik.minikube`)
+  - match: Host(`traefik.local`)
     kind: Rule
     services:
     - name: traefik
