@@ -1,3 +1,3 @@
-.vagrant/**
-**/tmp_files/**
+.vagrant
 **.retry
+vagrant_inventory
