@@ -20,7 +20,7 @@ There are 2 VIP's to ensure HA coverage:
 
 Both VIP's are assigned to the hosts via Keepalived which distributes the traffic via HaProxy to all hosts.
 
-(https://raw.githubusercontent.com/pixiono/kubernetes-playbook/master/docs/architecture.png "Architecture")
+![Architecture](https://raw.githubusercontent.com/pixiono/kubernetes-playbook/master/docs/architecture.png)
 
 ## Getting Started
 
