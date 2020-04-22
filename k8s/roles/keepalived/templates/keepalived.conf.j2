@@ -24,3 +24,20 @@ vrrp_instance k8s-api {
     check_haproxy
   }
 }
+
+vrrp_instance http {
+{% if inventory_hostname == groups['master'][0] %}
+  state MASTER
+{% else %}
+  state BACKUP
+{% endif %}
+  interface {{ http_interface }}
+  virtual_router_id 1
+  priority 99
+  virtual_ipaddress {
+    {{ http_endpoint }}
+  }
+  track_script {
+    check_haproxy
+  }
+}
