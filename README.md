@@ -1,5 +1,5 @@
 
-# Project Title
+# Kubernetes-playbook
 
 This repository was created during my preparation to become a Certified Kubernetes Administrator (CKA) but has grown in functionality over time. The goal of this Playbook is to provide a slim solution for the provisioning of a Kubernetes cluster locally and for productive purposes with some additional components.
 
@@ -19,6 +19,8 @@ There are 2 VIP's to ensure HA coverage:
 * 10.0.33.3 (Private IP address used for the Kubernetes API and internal services)
 
 Both VIP's are assigned to the hosts via Keepalived which distributes the traffic via HaProxy to all hosts.
+
+(https://raw.githubusercontent.com/pixiono/kubernetes-playbook/master/docs/architecture.png "Architecture")
 
 ## Getting Started
 
