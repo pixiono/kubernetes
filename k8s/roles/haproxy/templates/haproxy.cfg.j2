@@ -37,7 +37,8 @@ defaults
   errorfile 504 /etc/haproxy/errors/504.http
 
 listen stats
-  bind    127.0.0.1:9000
+  # Restrict to local ip only
+  bind    {{ node_ip }}:9000
   mode    http
   stats   enable
   stats   hide-version
@@ -48,7 +49,8 @@ listen stats
   stats   admin     if TRUE
 
 frontend k8s-api
-  bind *:8443
+  #bind {{ control_plane_endpoint }}:{{ control_plane_endpoint_port }}
+  bind *:{{ control_plane_endpoint_port }}
   mode tcp
   option tcplog
   default_backend k8s-api

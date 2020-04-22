@@ -8,13 +8,13 @@ vrrp_script check_haproxy {
   weight 2
 }
  
-vrrp_instance web-prod {
+vrrp_instance k8s-api {
 {% if inventory_hostname == groups['master'][0] %}
   state MASTER
 {% else %}
-  state MASTER
+  state BACKUP
 {% endif %}
-  interface eth1
+  interface {{ control_plane_interface }}
   virtual_router_id 1
   priority 99
   virtual_ipaddress {
