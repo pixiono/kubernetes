@@ -118,4 +118,7 @@ Now you should be able the application from your local machine via http://exampl
 
 * Use helm module
 * Optimize influxdb role
+* Kubernetes dashboard
+* Habor registry
+* Grafana
 
