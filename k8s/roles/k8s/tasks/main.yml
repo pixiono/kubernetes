@@ -1,11 +1,12 @@
   - name: Install prerequirements
     include: roles/k8s/tasks/prerequirements.yml
 
-  # Master in this case is the first master node
+  # Task's for the first master
   - name: Run master tasks
     include: roles/k8s/tasks/master.yml
     when: inventory_hostname == groups['master'][0]
 
+ # Task's for all other nodes
   - name: Run node tasks
     include: roles/k8s/tasks/node.yml
     when: not inventory_hostname == groups['master'][0]
@@ -14,7 +15,7 @@
     become: false
     shell: "kubectl taint nodes --all node-role.kubernetes.io/master-"
     ignore_errors: yes
-    when: "'master' in {{ group_names }}"
+    when: "'master' in group_names"
 
   - name: Run traefik tasks
     include: roles/k8s/tasks/traefik.yml

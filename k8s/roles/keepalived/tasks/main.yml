@@ -22,4 +22,4 @@
   service:
     name: keepalived
     state: restarted
-  when: keepalived_config.changed and "'master' in group_names"
+  when: keepalived_config.changed

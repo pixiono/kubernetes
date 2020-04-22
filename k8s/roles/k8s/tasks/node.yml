@@ -21,4 +21,4 @@
   when: not kubernetes_init.stat.exists
 
 - include: roles/k8s/tasks/kube_config.yml
-  when: "'master' in {{ group_names }}"
+  when: "'master' in group_names"

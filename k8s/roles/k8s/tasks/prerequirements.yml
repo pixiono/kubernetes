@@ -33,6 +33,7 @@
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/debian buster stable"
     state: present
+    filename: docker.list
 
 - name: Install docker and its dependecies
   apt: 
@@ -57,7 +58,7 @@
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
     state: present
 
-- name: Adding apt repository for Kubernetes
+- name: Add apt repository for Kubernetes
   apt_repository:
     repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
     state: present
