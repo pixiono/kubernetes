@@ -82,5 +82,22 @@ backend k8s-http
 
   default-server inter 2 downinter 2s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
 {% for host in groups['master'] %}
-  server k8s-{{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['node_ip'] }}:8080 check
+  server k8s-{{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['node_ip'] }}:30080 check
 {% endfor %}
+
+{% if ansible_user == "vagrant" %}
+frontend k8s-http-internal
+  bind {{ control_plane_endpoint }}:88
+  mode http
+  default_backend k8s-http-internal
+
+backend k8s-http-internal
+  mode http
+
+  balance roundrobin
+
+  default-server inter 2 downinter 2s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+{% for host in groups['master'] %}
+  server k8s-{{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['node_ip'] }}:30088 check
+{% endfor %}
+{% endif %}
