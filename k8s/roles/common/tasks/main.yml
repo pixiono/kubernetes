@@ -2,12 +2,6 @@
   timezone:
     name: Europe/Berlin
 
-- name: Add ssh-key
-  authorized_key:
-    user: vagrant
-    state: present
-    key: https://github.com/pixiono.keys
-
 - name: Install common packages
   apt:
     name: "{{ packages }}"
