@@ -43,7 +43,7 @@ Vagrant.configure("2") do |config|
       config.vm.define "#{type}#{i}" do |machine|
         machine.vm.network "private_network", ip: "#{data['ip_prefix']}#{i}"
         machine.vm.network "private_network", ip: "#{data['node_ip_prefix']}#{i}"
-        machine.vm.hostname = "master#{i}"
+        machine.vm.hostname = "#{type}#{i}"
         machine.vm.provider "virtualbox" do |vb|
             vb.cpus = 2
             vb.memory = 2048
