@@ -1,0 +1,21 @@
+helm-operator:
+  helm:
+    versions: v3
+
+traefik:
+  chartVersion: 8.9.1
+  ingress:
+    host: traefik.local
+    entrypoints: internal
+
+prometheusOperator:
+  chartVersion: 8.15.5
+  prometheus:
+    ingress:
+      host: prometheus.local
+      entrypoints: internal
+  grafana:
+    adminPassword: adminadmin
+    ingress:
+      host: grafana.local
+      entrypoints: internal

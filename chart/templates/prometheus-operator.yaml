@@ -1,0 +1,39 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metrics
+
+---
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: prometheus
+  namespace: metrics
+spec:
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com
+    name: prometheus-operator
+    version: {{ .Values.prometheusOperator.chartVersion }}
+  values:
+    # https://github.com/helm/charts/issues/19928
+    # prometheusOperator.admissionWebhooks.enabled: false
+    # prometheusOperator.admissionWebhooks.patch.enabled: false
+    # prometheusOperator.tlsProxy.enabled: false
+    grafana:
+      adminPassword: {{ .Values.prometheusOperator.grafana.adminPassword }}
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+          traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.grafana.ingress.entrypoints }}
+        hosts:
+          - {{ .Values.prometheusOperator.grafana.ingress.host }}
+    prometheus:
+      ingress:
+        enabled: true
+        annotations:
+          kubernetes.io/ingress.class: traefik
+          traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.prometheus.ingress.entrypoints }}
+        hosts:
+          - {{ .Values.prometheusOperator.prometheus.ingress.host }}
