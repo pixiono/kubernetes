@@ -117,3 +117,7 @@
     state: link
     src:  /opt/kubectx/kubens
     dest: /usr/local/bin/kubens
+
+- name: Install helm cli
+  shell: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+  become: false

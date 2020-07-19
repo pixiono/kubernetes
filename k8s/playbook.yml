@@ -13,7 +13,7 @@
     - keepalived
     - haproxy
     - k8s
-    - influxdb
+    # - influxdb
   handlers:
     - name: docker status
       service: name=docker state=started
