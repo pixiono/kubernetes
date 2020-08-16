@@ -75,20 +75,6 @@
       - kubeadm 
       - kubectl
 
-- name: Configure node ip
-  lineinfile:
-    path: /etc/default/kubelet
-    line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
-    create: yes
-  register: configurenodeip
-
-- name: Restart kubelet
-  service:
-    name: kubelet
-    daemon_reload: yes
-    state: restarted
-  when: configurenodeip.changed
-
 # needed for pip module
 - name: Install pip3
   apt:

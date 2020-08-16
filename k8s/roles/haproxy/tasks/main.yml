@@ -3,6 +3,7 @@
     name: haproxy
     state: present
   when: "'master' in group_names"
+  tags: base
 
 - name: Add haproxy configuration
   template:

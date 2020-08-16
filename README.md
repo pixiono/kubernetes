@@ -35,7 +35,23 @@ You should also make sure that your environment provides enough resources or adj
 
 ### Installing
 
-You can start the cluster with just one command:
+The Vagrantfile consists of 2 parts: base-box and nodes.
+ 
+The base image must be built previously to increase the speed of the VM's rollout. To do this you have to execute the following to start the VM:
+
+```
+vagrant up base
+```
+
+Then the following commands must be executed to convert the VM into a box:
+```
+vagrant package base --output k8s.box && \
+vagrant box add k8s-base k8s.box -f && \
+vagrant destroy base -f
+```
+
+Afterwards the node VMs can be started with just one command:
+
 ```
 vagrant up
 ```

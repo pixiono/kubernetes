@@ -1,5 +1,20 @@
   - name: Install prerequirements
     include: roles/k8s/tasks/prerequirements.yml
+    tags: base
+
+  - name: Configure node ip
+    lineinfile:
+      path: /etc/default/kubelet
+      line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
+      create: yes
+    register: configurenodeip
+  
+  - name: Restart kubelet
+    service:
+      name: kubelet
+      daemon_reload: yes
+      state: restarted
+    when: configurenodeip.changed
 
   # Task's for the first master
   - name: Run master tasks

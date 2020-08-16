@@ -35,27 +35,55 @@ end
 inventory.close
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/buster64"
 
-  hosts.each_pair do |type, data|
-    (1..data['count']).each do |i|
-      
-      config.vm.define "#{type}#{i}" do |machine|
-        machine.vm.network "private_network", ip: "#{data['ip_prefix']}#{i}"
-        machine.vm.network "private_network", ip: "#{data['node_ip_prefix']}#{i}"
-        machine.vm.hostname = "#{type}#{i}"
-        machine.vm.provider "virtualbox" do |vb|
-            vb.cpus = 2
-            vb.memory = 2048
+  if ARGV[1] == 'base'
+    
+    config.vm.box = "debian/buster64"
+    config.vm.define "base" do |machine|
+      machine.vm.hostname = "base"
+      machine.vm.provider "virtualbox" do |vb|
+        vb.cpus = 2
+        vb.memory = 2048
+      end
+    end
+    config.vm.post_up_message = "vagrant package base --output k8s.box && vagrant box add k8s-base k8s.box -f && vagrant destroy base -f"
+
+  else
+    config.vm.box = "k8s-base"
+
+    hosts.each_pair do |type, data|
+      (1..data['count']).each do |i|
+        
+        config.vm.define "#{type}#{i}" do |machine|
+          machine.vm.network "private_network", ip: "#{data['ip_prefix']}#{i}"
+          machine.vm.network "private_network", ip: "#{data['node_ip_prefix']}#{i}"
+          machine.vm.hostname = "#{type}#{i}"
+          machine.vm.provider "virtualbox" do |vb|
+              vb.cpus = 2
+              vb.memory = 2048
+          end
         end
       end
     end
   end
 
   config.vm.provision "ansible" do |ansible|
-    # ansible.verbose = "vvvv"
+    ansible.verbose = "vv"
     ansible.playbook = "k8s/playbook.yml"
-    ansible.inventory_path = "vagrant_inventory"
+
+    # Use tag "base" based on ARGV
+    if ARGV[1] == 'base'
+      ansible.tags = "base"
+
+      # Needed for installing everything
+      ansible.groups = {
+        "master" => ["base"]
+      }
+    else
+      ansible.inventory_path = "vagrant_inventory"
+      ansible.skip_tags = "base"
+    end
+
   end
 
 end
