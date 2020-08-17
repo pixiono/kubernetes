@@ -1,15 +1,9 @@
 - name: Allow ip foward and nonlocal bind
-  shell: echo "{{ item }} >> /etc/sysctl.conf"
+  command: "{{ item }}"
   with_items:
-    - net.ipv4.ip_forward=1
-    - net.ipv4.ip_nonlocal_bind=1
+    - sysctl -w net.ipv4.ip_forward="1"
+    - sysctl -w net.ipv4.ip_nonlocal_bind="1"
   when: "'master' in group_names"
-  tags: base
-
-- name: Allow ip foward and nonlocal bind
-  shell: sysctl -p
-  when: "'master' in group_names"
-  tags: base
 
 - name: Install keepalived
   apt:
