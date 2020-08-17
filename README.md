@@ -28,8 +28,14 @@ The following steps only describe the installation for a local environment.
 
 ### Prerequisites
 The following items are required to set up on a local environment:
+* Virtualbox (tested in **6.1.12**)
 * Vagrant (tested in **2.2.7**)
 * Ansible (tested in **2.7.12**)
+
+You also need to install the vbguest plugin:
+```
+vagrant plugin install vagrant-vbguest
+```
 
 You should also make sure that your environment provides enough resources or adjust the Vagrantfile if necessary.
 
