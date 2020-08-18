@@ -17,7 +17,7 @@
   when: not kubernetes_init.stat.exists
 
 - name: Join node to cluster
-  shell: "{{ join_command.stdout }} --apiserver-advertise-address={{ node_ip }} {% if \"'master' in {{ group_names }}\" %} --certificate-key {{ cert_key.stdout_lines[2] }} --control-plane {% endif %}"
+  shell: "{{ join_command.stdout }} --apiserver-advertise-address={{ node_ip }} {% if 'master' in group_names %} --certificate-key {{ cert_key.stdout_lines[2] }} --control-plane {% endif %}"
   when: not kubernetes_init.stat.exists
 
 - include: roles/k8s/tasks/kube_config.yml
