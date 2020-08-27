@@ -6,37 +6,79 @@ kind: Namespace
 metadata:
   name: metrics
 
+# ---
+# apiVersion: helm.fluxcd.io/v1
+# kind: HelmRelease
+# metadata:
+#   name: prometheus
+#   namespace: metrics
+# spec:
+#   chart:
+#     repository: https://kubernetes-charts.storage.googleapis.com
+#     name: prometheus-operator
+#     version: {{ .Values.prometheusOperator.chartVersion }}
+#   values:
+#     # https://github.com/helm/charts/issues/19928
+#     # prometheusOperator.admissionWebhooks.enabled: false
+#     # prometheusOperator.admissionWebhooks.patch.enabled: false
+#     # prometheusOperator.tlsProxy.enabled: false
+#     grafana:
+#       adminPassword: {{ .Values.prometheusOperator.grafana.adminPassword }}
+#       ingress:
+#         enabled: true
+#         annotations:
+#           kubernetes.io/ingress.class: traefik
+#           traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.grafana.ingress.entrypoints }}
+#         hosts:
+#           - {{ .Values.prometheusOperator.grafana.ingress.host }}
+#     prometheus:
+#       ingress:
+#         enabled: true
+#         annotations:
+#           kubernetes.io/ingress.class: traefik
+#           traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.prometheus.ingress.entrypoints }}
+#         hosts:
+#           - {{ .Values.prometheusOperator.prometheus.ingress.host }}
+
 ---
-apiVersion: helm.fluxcd.io/v1
-kind: HelmRelease
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
   name: prometheus
-  namespace: metrics
+  namespace: default
 spec:
-  chart:
-    repository: https://kubernetes-charts.storage.googleapis.com
-    name: prometheus-operator
-    version: {{ .Values.prometheusOperator.chartVersion }}
-  values:
-    # https://github.com/helm/charts/issues/19928
-    # prometheusOperator.admissionWebhooks.enabled: false
-    # prometheusOperator.admissionWebhooks.patch.enabled: false
-    # prometheusOperator.tlsProxy.enabled: false
-    grafana:
-      adminPassword: {{ .Values.prometheusOperator.grafana.adminPassword }}
-      ingress:
-        enabled: true
-        annotations:
-          kubernetes.io/ingress.class: traefik
-          traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.grafana.ingress.entrypoints }}
-        hosts:
-          - {{ .Values.prometheusOperator.grafana.ingress.host }}
-    prometheus:
-      ingress:
-        enabled: true
-        annotations:
-          kubernetes.io/ingress.class: traefik
-          traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.prometheus.ingress.entrypoints }}
-        hosts:
-          - {{ .Values.prometheusOperator.prometheus.ingress.host }}
+  project: default
+  source:
+    repoURL: https://kubernetes-charts.storage.googleapis.com
+    chart: prometheus-operator
+    targetRevision: {{ .Values.prometheusOperator.chartVersion }}
+    helm:
+      values: |
+        # https://github.com/helm/charts/issues/19928
+        admissionWebhooks.enabled: false
+        admissionWebhooks.patch.enabled: false
+        tlsProxy.enabled: false
+        grafana:
+          adminPassword: {{ .Values.prometheusOperator.grafana.adminPassword }}
+          ingress:
+            enabled: true
+            annotations:
+              kubernetes.io/ingress.class: traefik
+              traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.grafana.ingress.entrypoints }}
+            hosts:
+              - {{ .Values.prometheusOperator.grafana.ingress.host }}
+        prometheus:
+          ingress:
+            enabled: true
+            annotations:
+              kubernetes.io/ingress.class: traefik
+              traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.prometheus.ingress.entrypoints }}
+            hosts:
+              - {{ .Values.prometheusOperator.prometheus.ingress.host }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: metrics
+  syncPolicy:
+    automated:
+      selfHeal: false
 {{- end }}
