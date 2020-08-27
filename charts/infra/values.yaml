@@ -1,4 +1,5 @@
 helm-operator:
+  enabled: false
   helm:
     versions: v3
 
@@ -9,6 +10,7 @@ traefik:
     entrypoints: internal
 
 prometheusOperator:
+  enabled: false
   chartVersion: 8.15.5
   prometheus:
     ingress:

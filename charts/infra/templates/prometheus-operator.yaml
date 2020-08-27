@@ -1,3 +1,5 @@
+{{- if .Values.prometheusOperator.enabled }}
+
 ---
 apiVersion: v1
 kind: Namespace
@@ -37,3 +39,4 @@ spec:
           traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.prometheusOperator.prometheus.ingress.entrypoints }}
         hosts:
           - {{ .Values.prometheusOperator.prometheus.ingress.host }}
+{{- end }}

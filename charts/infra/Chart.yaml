@@ -11,3 +11,4 @@ dependencies:
   - name: helm-operator
     version: 1.1.0
     repository: https://charts.fluxcd.io
+    condition: helm-operator.enabled
