@@ -1,3 +1,7 @@
+- name: Run dns tasks
+  include: roles/common/tasks/dns.yml
+  tags: base
+
 - name: Set timezone to Europe/Berlin
   timezone:
     name: Europe/Berlin
@@ -10,7 +14,6 @@
     update_cache: yes
   vars:
     packages:
-    - ntp
     - vim
     - htop
     - tree

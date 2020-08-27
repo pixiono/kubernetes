@@ -38,7 +38,7 @@ Vagrant.configure("2") do |config|
 
   if ARGV[1] == 'base'
     
-    config.vm.box = "debian/buster64"
+    config.vm.box = "hashicorp/bionic64"
     config.vm.define "base" do |machine|
       machine.vm.hostname = "base"
       machine.vm.provider "virtualbox" do |vb|

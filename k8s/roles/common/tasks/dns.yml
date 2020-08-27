@@ -1,0 +1,33 @@
+- name: Check if resolv.conf is symlink
+  stat:
+    path: /etc/resolv.conf
+  register: sym
+
+- name: debug
+  debug:
+    msg: "{{ sym.stat.islnk }}"
+  when: sym.stat.islnk
+
+- name: Remove resolv.conf symlink
+  file:
+    path: /etc/resolv.conf
+    state: absent
+  when: sym.stat.islnk
+  register: resolv
+
+- name: Copy resolv.conf into the right place
+  copy:
+    src: /run/systemd/resolve/stub-resolv.conf
+    dest: /etc/resolv.conf
+    remote_src: yes
+    mode: '0444'
+  when: resolv.changed
+
+- name: Add dns server
+  blockinfile:
+    path: /etc/resolv.conf
+    insertbefore: BOF
+    block: |
+       nameserver 8.8.8.8
+       nameserver 8.8.4.4
+  when: resolv.changed
