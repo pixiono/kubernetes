@@ -4,7 +4,7 @@ helm-operator:
     versions: v3
 
 traefik:
-  chartVersion: 8.9.1
+  chartVersion: 9.1.0
   ingress:
     host: traefik.local
     entrypoints: internal
