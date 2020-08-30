@@ -3,6 +3,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: traefik
+  annotations:
+      argocd.argoproj.io/sync-wave: "-1"
 
 # ---
 # apiVersion: helm.fluxcd.io/v1
@@ -50,6 +52,10 @@ kind: Application
 metadata:
   name: traefik
   namespace: default
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   project: default
   source:

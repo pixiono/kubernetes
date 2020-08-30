@@ -46,6 +46,8 @@ kind: Application
 metadata:
   name: prometheus
   namespace: default
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
