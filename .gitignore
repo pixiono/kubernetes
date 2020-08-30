@@ -1,3 +1,5 @@
 .vagrant
 **.retry
 vagrant_inventory
+**.tgz
+**Chart.lock

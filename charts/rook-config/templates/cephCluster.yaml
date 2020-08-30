@@ -1,0 +1,32 @@
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  cephVersion:
+    image: ceph/ceph:v15.2.4
+  dataDirHostPath: /var/lib/rook
+  mon:
+    count: 3
+    allowMultiplePerNode: false
+  dashboard:
+    enabled: true
+  # cluster level storage configuration and selection
+  storage:
+    useAllNodes: false
+    useAllDevices: false
+    config:
+      metadataDevice:
+      databaseSizeMB: "1024" # this value can be removed for environments with normal sized disks (100 GB or larger)
+    nodes:
+      - name: "master1"
+        devices: # specific devices to use for storage can be specified for each node
+          - name: "sdb"
+      - name: "master2"
+        devices: # specific devices to use for storage can be specified for each node
+          - name: "sdb"
+      - name: "master3"
+        devices: # specific devices to use for storage can be specified for each node
+          - name: "sdb"

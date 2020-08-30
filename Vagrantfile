@@ -54,13 +54,19 @@ Vagrant.configure("2") do |config|
     hosts.each_pair do |type, data|
       (1..data['count']).each do |i|
         
-        config.vm.define "#{type}#{i}" do |machine|
+        config.vm.define "#{type}#{i}" do |machine| 
           machine.vm.network "private_network", ip: "#{data['ip_prefix']}#{i}"
           machine.vm.network "private_network", ip: "#{data['node_ip_prefix']}#{i}"
           machine.vm.hostname = "#{type}#{i}"
           machine.vm.provider "virtualbox" do |vb|
               vb.cpus = 2
-              vb.memory = 2048
+              vb.memory = 3000
+
+              file_to_disk = "./.vagrant/disk-#{type}#{i}.vmdk"
+              unless File.exist?(file_to_disk)
+                vb.customize [ "createmedium", "disk", "--filename", file_to_disk, "--format", "vmdk", "--size", 40 * 1024 ]
+              end
+              vb.customize [ "storageattach", :id, "--storagectl", "SATA Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", file_to_disk ]
           end
         end
       end

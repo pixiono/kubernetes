@@ -1,0 +1,12 @@
+apiVersion: v2
+name: rook-config
+description: This chart deploy rook on my Kubernetes cluster
+
+version: 0.1.0
+appVersion: 0.10.0
+
+#crds: https://raw.githubusercontent.com/rook/rook/master/cluster/charts/rook-ceph/templates/resources.yaml
+#dependencies:
+#  - name: rook-ceph
+#    version: 1.4.2
+#    repository: https://charts.rook.io/release
