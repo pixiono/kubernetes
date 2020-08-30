@@ -1,6 +1,18 @@
+- name: Configure netowork interfaces
+  template:
+    src: vagrant-netplan.yaml.j2
+    dest: /etc/netplan/99-vagrant-netplan.yaml
+  register: netplan_config
+  when: ansible_user == "vagrant"
+
+- name: Apply netplan
+  command: netplan apply
+  when: netplan_config.changed and ansible_user == "vagrant"
+
 - name: Run dns tasks
   include: roles/common/tasks/dns.yml
   tags: base
+  when: ansible_user == "vagrant"
 
 - name: Set timezone to Europe/Berlin
   timezone:

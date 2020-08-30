@@ -1,0 +1,5 @@
+network:
+  ethernets:
+    {{ control_plane_interface }}:
+      addresses: [{{ node_ip }}/24]
+  version: 2

@@ -3,11 +3,6 @@
     path: /etc/resolv.conf
   register: sym
 
-- name: debug
-  debug:
-    msg: "{{ sym.stat.islnk }}"
-  when: sym.stat.islnk
-
 - name: Remove resolv.conf symlink
   file:
     path: /etc/resolv.conf

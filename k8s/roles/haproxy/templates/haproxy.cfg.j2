@@ -39,6 +39,8 @@ defaults
 listen stats
   # Restrict to local ip only
   bind    {{ node_ip }}:9000
+  bind    {{ control_plane_endpoint }}:9000
+
   mode    http
   stats   enable
   stats   hide-version
@@ -49,55 +51,41 @@ listen stats
   stats   admin     if TRUE
 
 frontend k8s-api
-  #bind {{ control_plane_endpoint }}:{{ control_plane_endpoint_port }}
+  {% if ansible_user == "vagrant" %}
   bind *:{{ control_plane_endpoint_port }}
+  {% else %}
+   bind {{ control_plane_endpoint }}:{{ control_plane_endpoint_port }}
+  {% endif %}
   mode tcp
   option tcplog
+
   default_backend k8s-api
 
 backend k8s-api
   mode tcp
-  option tcplog
-
-  #option httpchk GET /healz
-  #http-check expect status 200  
-
   option tcp-check
-
   balance roundrobin
-  default-server inter 2s downinter 2s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+
+  default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
 {% for host in groups['master'] %}
   server k8s-api-{{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['node_ip'] }}:6443 check
 {% endfor %}
 
 frontend k8s-http
   bind *:80
-  mode http
+  mode tcp
+  option tcplog
+
   default_backend k8s-http
 
-backend k8s-http
-  mode http
 
+backend k8s-http
+  mode tcp
+  option tcp-check
   balance roundrobin
 
-  default-server inter 2 downinter 2s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+
+  default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
 {% for host in groups['master'] %}
   server k8s-{{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['node_ip'] }}:30080 check
 {% endfor %}
-
-{% if ansible_user == "vagrant" %}
-frontend k8s-http-internal
-  bind {{ control_plane_endpoint }}:88
-  mode http
-  default_backend k8s-http-internal
-
-backend k8s-http-internal
-  mode http
-
-  balance roundrobin
-
-  default-server inter 2 downinter 2s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
-{% for host in groups['master'] %}
-  server k8s-{{ hostvars[host]['inventory_hostname'] }} {{ hostvars[host]['node_ip'] }}:30088 check
-{% endfor %}
-{% endif %}

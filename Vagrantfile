@@ -56,7 +56,8 @@ Vagrant.configure("2") do |config|
         
         config.vm.define "#{type}#{i}" do |machine| 
           machine.vm.network "private_network", ip: "#{data['ip_prefix']}#{i}"
-          machine.vm.network "private_network", ip: "#{data['node_ip_prefix']}#{i}"
+          # Disable auto_config for this private_network for setting the right ip for the right interface
+          machine.vm.network "private_network", ip: "#{data['node_ip_prefix']}#{i}", auto_config: false
           machine.vm.hostname = "#{type}#{i}"
           machine.vm.provider "virtualbox" do |vb|
               vb.cpus = 2

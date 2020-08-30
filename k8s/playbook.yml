@@ -4,9 +4,9 @@
   vars:
     control_plane_endpoint: 10.0.33.3
     control_plane_endpoint_port: 8443
-    control_plane_interface: eth1
+    control_plane_interface: eth2
     http_endpoint: 192.168.33.3
-    http_interface: eth2
+    http_interface: eth1
     ansible_python_interpreter: /usr/bin/python3
   roles:
     - common
