@@ -1,9 +1,0 @@
-apiVersion: v1
-data:
-  influxdb-password: a3ViZXJuZXRlcw==
-  influxdb-user: a3ViZXJuZXRlcw==
-kind: Secret
-metadata:
-  name: influxdb-auth
-  namespace: monitoring
-type: Opaque

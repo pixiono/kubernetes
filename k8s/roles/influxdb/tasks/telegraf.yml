@@ -1,2 +1,0 @@
-- name: Run telegraf helm chart
-  shell: helm upgrade --install telegraf influxdata/telegraf-ds -f /tmp/influxdb/files/telegraf_values.yml --namespace monitoring
