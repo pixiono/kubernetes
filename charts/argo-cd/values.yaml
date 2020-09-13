@@ -1,5 +1,24 @@
 argo-cd:
   server:
+    config:
+      url: http://argo.local
+      dex.config: |
+        connectors:
+          - type: github
+            id: github
+            name: GitHub
+            config:
+              clientID: $dex.github.clientID
+              clientSecret: $dex.github.clientSecret
+              orgs:
+              - name: rk8s
+    rbacConfig:
+      policy.default: role:read-only
+      policy.csv: |
+        p, role:argo-users, clusters, get, *, allow
+        g, rk8s:argo-users, role:argo-users
+
+        g, rk8s:argo-admins, role:admin
     ingress: 
       enabled: true
       annotations:
@@ -9,3 +28,7 @@ argo-cd:
         - argo.local
     extraArgs:
       - --insecure
+  configs:
+    secret:
+      # Secret have to be created before!
+      createSecret: false

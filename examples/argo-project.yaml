@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: tom-mc
+  # Finalizer that ensures that project is not deleted until it is not referenced by any application
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Tom's Minecraft-Server
+  sourceRepos:
+  - '*'
+  # Only permit applications to deploy to the "tom-mc" namespace in the same cluster
+  destinations:
+  - namespace: tom-mc
+    server: https://kubernetes.default.svc
+  # Allow all namespaced-scoped resources to be created, except for ResourceQuota, LimitRange, NetworkPolicy
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: ResourceQuota
+  - group: ''
+    kind: LimitRange
+  - group: ''
+    kind: NetworkPolicy
+  roles:
+  # Allow user from the github-team rk8s:tom-mc anything inside this project
+  - name: user
+    description: Read-only privileges to my-project
+    policies:
+    - p, proj:tom-mc:user, applications, *, tom-mc/*, allow
+    groups:
+    - rk8s:tom-mc
