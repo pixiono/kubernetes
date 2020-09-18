@@ -19,6 +19,12 @@
     name: Europe/Berlin
   tags: base
 
+- name: Upgrade apt packages
+  apt:
+    name: "*"
+    state: latest
+  tags: base
+
 - name: Install common packages
   apt:
     name: "{{ packages }}"
