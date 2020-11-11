@@ -11,5 +11,5 @@
     src: /etc/kubernetes/admin.conf
     dest: /home/vagrant/.kube/config
     owner: vagrant
-    group: vagrant 
-    
+    group: vagrant
+    mode: 0400 
